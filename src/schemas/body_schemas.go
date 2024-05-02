@@ -1,7 +1,7 @@
 package schemas
 
-type LoginSchema struct {
-	UserId   string `json:"name" validate:"required,min=3,max=10,alphanum"`
+type CreateUserSchema struct {
+	Name     string `json:"name" validate:"required,min=3,max=10,alphanum"`
 	Password string `json:"password" validate:"required,min=3,max=10,alphanum"`
 }
 
