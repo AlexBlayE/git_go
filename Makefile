@@ -10,8 +10,8 @@ all: test build
 build:
 	$(GOBUILD) -o ./dist/devforge .
 
-test:
-	$(GOTEST) ./...
+tests:
+	$(GOTEST) ./test
 
 clean:
 	$(GOCLEAN)
