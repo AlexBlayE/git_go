@@ -26,7 +26,7 @@ func CreateMongoModel[T any](modelName string, properties T) *mongoModel[T] {
 	}
 }
 
-func (m *mongoModel[T]) SetUniqueField(uniqueFields ...string) *mongoModel[T] {
+func (m *mongoModel[T]) setUniqueField(uniqueFields ...string) *mongoModel[T] {
 	length := len(uniqueFields)
 
 	if length > 1 {
