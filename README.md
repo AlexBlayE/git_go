@@ -7,3 +7,5 @@
 * Gestió dels usuaris
 * Api de interacció
 * VInculació amb bbdd amb DAO
+* Possiblilitat d'integració amb ci/cd
+* WebHooks

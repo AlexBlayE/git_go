@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"git_go/src/routes"
+	"git_go/src/services"
 	"net/http"
 
 	githttp "github.com/AaronO/go-git-http"
@@ -11,6 +11,8 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
+// TODO: en un futur fer que es puguin crear diversos rervidors y que es pugui redirigir la petició a un altre servidor si en aquest no está el repo
+
 func main() {
 	go repo()
 
@@ -18,7 +20,11 @@ func main() {
 		app := gin.Default()
 
 		routes.UserRouter(app, "/api/user")
+		// Ruta de grups
+		// Ruta de info de repositori
+		// Ruta de admin i opcions
 
+		// ruta per lo de git
 		app.Use(func(ctx *gin.Context) {
 			originalUrl := ctx.Request.URL
 			originalUrl.Host = "localhost:7000"
@@ -35,22 +41,19 @@ func repo() {
 
 	// TODO: em deixa clonarlo i no vui sense autentificarme
 	authenticator := auth.Authenticator(func(info auth.AuthInfo) (bool, error) {
-		// info.Repo
-		// Disallow Pushes (making git server pull only)// TODO: en un futur fer aixó per depen dels usuaris
+		return true, nil
+		if services.IsUserLogged(info.Username, info.Password) {
+			return true, nil
+		}
+
+		// TODO: aqui mirar si l'usuari te permisos pel repositori i quins permisos té
+		// TODO: anar comprovant el tamañ del repositori per que no s'arribi al limit
+
 		if info.Push {
 			return false, nil
 		}
 
-		fmt.Println(info.Repo)
-		fmt.Println(info.Username)
-
-		// Typically this would be a database lookup
-		// if services.IsUserLogged(info.Username, info.Password) { // TODO: fer que miri si existeix l'usuari, si conincideix la contraseña y si te els permisos per aquest repo
-		// 	return true, nil
-		// }
-
-		// return false, nil
-		return true, nil
+		return false, nil
 	})
 
 	http.Handle("/", authenticator(repos)) //
