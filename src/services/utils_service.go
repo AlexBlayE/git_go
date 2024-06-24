@@ -30,7 +30,7 @@ func CreateJwt(token string) (string, error) {
 
 func ValidateJwt(signedToken string) (string, error) {
 	token, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
-		return os.Getenv("JWT_SECRET"), nil
+		return []byte("JWT_SECRET"), nil
 	})
 
 	if err != nil {

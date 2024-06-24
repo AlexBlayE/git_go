@@ -6,6 +6,7 @@ import (
 	"git_go/src/schemas"
 
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateUser(name string, pass string) (string, error) {
@@ -45,20 +46,21 @@ func CreateUser(name string, pass string) (string, error) {
 }
 
 func IsUserLogged(name string, password string) bool {
-	// user, err := models.User.FindOne(primitive.M{
-	// 	"name":     name,
-	// 	// "password": password,
-	// })
+	user, err := models.User.FindOne(primitive.M{
+		"name": name,
+	})
 
-	// if err != nil {
-	// 	return false
-	// }
+	fmt.Println(user)
 
-	// fmt.Println(user)
-
-	if name == "qqq" {
-		return true
+	if err != nil {
+		return false
 	}
 
-	return false
+	err = IsValidPassword(password, user.Password)
+
+	if err != nil {
+		return false
+	}
+
+	return true
 }
