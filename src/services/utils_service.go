@@ -19,10 +19,10 @@ func IsValidPassword(password string, hash string) error {
 	return err
 }
 
-func CreateJwt(token string) (string, error) {
+func CreateJwt(token string) (string, error) { // TODO: cambiar el temps i eso
 	creator := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"token": token,
-		"exp":   time.Now().Add(time.Hour * 24).Unix(),
+		"exp":   time.Now().Add(time.Second * 24).Unix(), //
 	})
 	str, err := creator.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	return str, err

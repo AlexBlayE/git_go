@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func CreateUser(name string, pass string) (string, error) {
+func CreateUser(name string, pass string, email string) (string, error) {
 	encryptedPassword, err := EncryptPassword(pass)
 
 	if err != nil {
@@ -26,13 +26,12 @@ func CreateUser(name string, pass string) (string, error) {
 
 	jwtToken, err := CreateJwt(token)
 
-	fmt.Println(jwtToken)
-
 	if err != nil {
 		return "", err
 	}
 
 	_, err = models.User.InsertOne(schemas.User{
+		Email:    email,
 		Name:     name,
 		Password: encryptedPassword,
 		Token:    token,
@@ -45,22 +44,50 @@ func CreateUser(name string, pass string) (string, error) {
 	return jwtToken, err
 }
 
-func IsUserLogged(name string, password string) bool {
+func RefreshToken(email string, password string) (string, bool) {
 	user, err := models.User.FindOne(primitive.M{
-		"name": name,
+		"email": email,
 	})
 
-	fmt.Println(user)
-
 	if err != nil {
-		return false
+		return "", false
 	}
 
 	err = IsValidPassword(password, user.Password)
 
 	if err != nil {
-		return false
+		return "", false
 	}
 
-	return true
+	newToken, err := uuid.NewRandom()
+
+	if err != nil {
+		return "", false
+	}
+
+	_, err = models.User.UpdateOne(
+		primitive.M{"email": email},
+		primitive.M{"token": newToken.String()},
+	)
+
+	if err != nil {
+		fmt.Println(err)
+		return "", false
+	}
+
+	jwt, err := CreateJwt(newToken.String())
+
+	if err != nil {
+		return "", false
+	}
+
+	return jwt, true
+}
+
+func IsAuthTokenExists(token string) bool {
+	_, err := models.User.FindOne(primitive.M{
+		"token": token,
+	})
+
+	return err != nil
 }
