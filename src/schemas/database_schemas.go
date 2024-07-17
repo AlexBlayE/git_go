@@ -5,6 +5,7 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 type User struct {
 	Name     string
 	Password string
+	Email    string
 	Token    string
 }
 

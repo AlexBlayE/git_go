@@ -12,12 +12,15 @@ import (
 )
 
 // TODO: en un futur fer que es puguin crear diversos rervidors y que es pugui redirigir la petició a un altre servidor si en aquest no está el repo
-
+// TODO: implementar un logger
 func main() {
+	// TODO: aquí crear el user admin si no existeix
 	go repo()
 
 	func() {
 		app := gin.Default()
+
+		// app.SetTrustedProxies()
 
 		routes.UserRouter(app, "/api/user")
 		// Ruta de grups
@@ -41,8 +44,7 @@ func repo() {
 
 	// TODO: em deixa clonarlo i no vui sense autentificarme
 	authenticator := auth.Authenticator(func(info auth.AuthInfo) (bool, error) {
-		return true, nil
-		if services.IsUserLogged(info.Username, info.Password) {
+		if _, isValid := services.RefreshToken(info.Username, info.Password); isValid { // TODO: fer que es pugui comparar tant el email com en nom
 			return true, nil
 		}
 

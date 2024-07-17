@@ -107,7 +107,7 @@ func (m *mongoModel[T]) InsertOne(newDocument T) (primitive.ObjectID, error) {
 }
 
 func (m *mongoModel[T]) UpdateOne(find bson.M, update bson.M) (*mongo.UpdateResult, error) {
-	return m.collection.UpdateOne(ctx, find, update)
+	return m.collection.UpdateOne(ctx, find, primitive.M{"$set": update})
 }
 
 func (m *mongoModel[T]) UpdateMany(find bson.M, update bson.M) (*mongo.UpdateResult, error) {

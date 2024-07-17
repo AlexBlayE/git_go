@@ -1,6 +1,6 @@
 module git_go
 
-go 1.22.1
+go 1.22.5
 
 require (
 	github.com/go-playground/validator/v10 v10.14.0
